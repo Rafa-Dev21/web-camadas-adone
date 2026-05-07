@@ -96,10 +96,7 @@ Após a sincronização do banco, utilizei o Prisma Studio e também realizei te
 
 ### Print dos dados aparecendo no banco remoto
 
-<img width="1836" height="1001" alt="api funcionando" src="https://github.com/user-attachments/assets/d142193b-35aa-4527-a63e-4e54efa229cc" />
-
 <img width="1892" height="950" alt="image" src="https://github.com/user-attachments/assets/5f37f980-cf73-4b44-94cc-8663fbb01753" />
-
 
 ## Diferenças entre banco local e remoto
 
