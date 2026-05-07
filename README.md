@@ -2,99 +2,109 @@
 
 ## Banco de dados local
 
-No meu projeto final eu utilizei o MySQL rodando localmente na minha máquina usando o Prisma e a 
-interface dele o Prisma Studio.
+No meu projeto final utilizei o MySQL rodando localmente na minha máquina junto com o Prisma ORM. Durante o desenvolvimento utilizei o Prisma Studio para visualizar e gerenciar os dados do banco.
 
-A conexão com o banco era feita através da variável DATABASE_URL no arquivo .env, apontando para o localhost.
+A conexão com o banco local era feita através da variável `DATABASE_URL` no arquivo `.env`, apontando para o localhost da máquina.
 
-O Prisma era responsável por gerenciar as tabelas com base no schema.prisma.
+O Prisma era responsável por criar e gerenciar as tabelas automaticamente com base no arquivo `schema.prisma` do projeto.
 
-Abaixo estão alguns prints do banco local e das tabelas criadas.
+Abaixo estão alguns prints do banco local, do schema do Prisma e das tabelas criadas.
 
+* PRINTS AQ
 
-- PRINTS AQ
-
-
-
-## Opções de hospedagem
+## Opções de hospedagem pesquisadas
 
 ### Railway
-O Railway oferece banco MySQL gratuito com algumas limitações de uso. É compatível com Prisma e possui integração simples.
 
-Considerei utilizar essa opção pela facilidade, porém optei por outra plataforma para testar uma configuração diferente.
+O Railway oferece hospedagem gratuita de banco MySQL com integração simples e rápida. A plataforma gera automaticamente a connection string necessária para conexão remota e possui compatibilidade com Prisma.
+
+Escolhi utilizar o Railway no projeto pois apresentou configuração mais simples e conexão estável no ambiente utilizado.
 
 ---
 
 ### Supabase
-O Supabase oferece banco PostgreSQL gratuito, com limite de armazenamento e conexões. Funciona com Prisma, porém utiliza PostgreSQL ao invés de MySQL.
 
-Não utilizei pois meu projeto já estava estruturado com MySQL.
+O Supabase oferece banco PostgreSQL gratuito com limite de armazenamento e conexões no plano free. Também possui compatibilidade com Prisma.
+
+Apesar de ser uma plataforma muito utilizada, optei por não utilizar porque meu projeto já estava estruturado utilizando MySQL.
 
 ---
 
 ### Aiven
-O Aiven oferece serviços de banco como MySQL e PostgreSQL, com plano gratuito por tempo limitado.
 
-Escolhi utilizar o Aiven para testar a conexão com um banco remoto mais próximo de um ambiente real, mesmo sendo um pouco mais complexo de configurar.
-E também foi o que o professor me auxiliou a configurar em um outro projeto meu, então tenho mais familiaridade.
+O Aiven oferece serviços de banco de dados como MySQL e PostgreSQL em nuvem. A plataforma possui recursos mais próximos de um ambiente profissional e permite configuração de SSL e acesso remoto.
 
-
+Inicialmente considerei utilizar o Aiven porque já tinha tido contato com a plataforma anteriormente em outro projeto. Porém, durante os testes encontrei dificuldades relacionadas à conexão remota e SSL no ambiente utilizado.
 
 ## Hospedagem do banco de dados
 
-Para hospedar o banco de dados do meu projeto, utilizei o Aiven.
+Para hospedar o banco de dados do meu projeto utilizei o Railway.
 
-Primeiramente, criei uma conta na plataforma e em seguida criei um serviço de banco MySQL.
+Primeiramente criei uma conta na plataforma e em seguida criei um serviço MySQL dentro do projeto.
 
-Após a criação, o Aiven disponibilizou as informações de conexão, como host, porta, usuário, senha e nome do banco.
+Após a criação do banco, o Railway disponibilizou automaticamente as informações de conexão, como host, porta, usuário, senha e nome do banco de dados.
 
-Com esses dados, montei a connection string e atualizei a variável DATABASE_URL no arquivo .env do meu projeto para apontar para o banco remoto.
+Com esses dados, atualizei a variável `DATABASE_URL` no arquivo `.env` para apontar para o banco remoto hospedado na nuvem.
 
-Depois disso, executei o comando do Prisma para criar as tabelas no banco remoto.
+Depois disso executei o comando:
 
-Após a criação das tabelas, testei a API e as requisições funcionaram normalmente utilizando o banco hospedado na nuvem.
+```bash
+npx prisma db push
+```
 
+Esse comando criou automaticamente todas as tabelas do projeto no banco remoto com base no schema do Prisma.
 
-- PRINTS AQ
+Após a sincronização do banco, utilizei o Prisma Studio e também realizei testes nas rotas da API para confirmar que as requisições estavam funcionando corretamente utilizando o banco remoto.
 
+* PRINTS AQ
 
 ## Diferenças entre banco local e remoto
 
 ### Connection string
 
-A connection string é basicamente uma URL que a aplicação usa para se conectar ao banco de dados.
+A connection string é uma URL utilizada pela aplicação para realizar a conexão com o banco de dados.
 
-Nela ficam informações importantes como o tipo do banco (no meu caso MySQL), o usuário, a senha, o host (endereço do servidor), a porta e o nome do banco.
+Nela ficam informações importantes como:
 
-No ambiente local, essa conexão apontava para o localhost, já no banco remoto passou a apontar para o servidor do Aiven.
+* tipo do banco
+* usuário
+* senha
+* host
+* porta
+* nome do banco
+
+No ambiente local a conexão apontava para o localhost da minha máquina. Já no ambiente remoto a conexão passou a utilizar o endereço fornecido pelo Railway.
 
 ---
 
-### Uso do .env
+### Uso do arquivo .env
 
-O arquivo .env é utilizado para guardar dados sensíveis da aplicação, como a connection string do banco.
+O arquivo `.env` é utilizado para armazenar informações sensíveis da aplicação, principalmente a connection string do banco de dados.
 
-Ele não é enviado para o GitHub porque contém informações como usuário e senha do banco, o que poderia comprometer a segurança do sistema.
+Esse arquivo não deve ser enviado para o GitHub porque contém dados privados como usuário e senha do banco.
 
-Por isso, cada ambiente (local ou remoto) pode ter um .env diferente sem precisar alterar o código.
+Por esse motivo, cada ambiente pode possuir uma configuração diferente de banco sem precisar alterar diretamente o código da aplicação.
 
 ---
 
 ### Dados do banco
 
-Os dados que estavam no banco local não foram automaticamente para o banco remoto.
+Os dados existentes no banco local não foram enviados automaticamente para o banco remoto.
 
-Isso acontece porque são dois bancos diferentes, em ambientes separados.
+Isso acontece porque os dois bancos funcionam em ambientes separados.
 
-Para transferir os dados seria necessário fazer exportação e importação manual, o que não foi feito nesse caso.
+Para transferir os dados seria necessário realizar exportação e importação manual ou utilizar ferramentas de migração de dados.
 
 ---
 
 ### Problemas encontrados
 
-Durante o processo tive dificuldade para conectar ao banco remoto do Aiven.
+Durante o processo tentei inicialmente utilizar o Aiven para hospedar o banco de dados remoto.
 
-Inicialmente a conexão não funcionava corretamente por conta da configuração de segurança (SSL).
+Porém encontrei dificuldades de conexão com o Prisma. O erro apresentado era o `P1001`, indicando que a aplicação não conseguia acessar o servidor remoto do banco de dados.
 
-Após ajustar a connection string com os parâmetros corretos, consegui conectar normalmente e executar as migrations do Prisma no banco remoto.
+Foram realizados testes de conexão via terminal e verificações relacionadas à porta e SSL da conexão remota.
 
+Após os testes, optei por utilizar o Railway como alternativa, pois apresentou integração mais simples com o Prisma e conexão funcionando corretamente no ambiente utilizado.
+
+Com a atualização da `DATABASE_URL` utilizando os dados fornecidos pelo Railway, consegui executar o comando `npx prisma db push` sem problemas e criar as tabelas remotamente.
